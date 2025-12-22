@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 1. ELITE TECH FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Rajdhani:wght@500;600;700&display=swap');
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #020202; /* True Black */
+  color: #e2e8f0;
+  overflow-x: hidden;
+  margin: 0;
+  -webkit-font-smoothing: antialiased; /* Sharper Text */
+}
+
+/* Tech Headings Font */
+h1, h2, h3, h4, .font-tech {
+  font-family: 'Rajdhani', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+/* --- SNAKE BORDER ANIMATION (Refined) --- */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.snake-border-wrapper {
+  position: relative;
+  background: #0a0a0a;
+  padding: 1px; /* Thinner, sharper border */
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+.snake-border-wrapper::after {
+  content: '';
+  position: absolute;
+  height: 200%; /* Larger to ensure coverage */
+  width: 200%;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  background-image: conic-gradient(from var(--angle), transparent 80%, #0ea5e9, #ffffff, #20e90e);
+  animation: spin 4s linear infinite;
+  z-index: 0;
+}
+
+.snake-inner {
+  background: #020202;
+  border-radius: 40px;
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+}
+
+@keyframes spin {
+  from { --angle: 0deg; }
+  to { --angle: 360deg; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }

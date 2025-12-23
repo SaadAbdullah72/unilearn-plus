@@ -7,23 +7,39 @@ const path = require('path');
 
 const app = express();
 
-// Middleware
+// ✅ FIX 1: CORS origin se slash hatana aur localhost bhi add karna (Testing ke liye)
+const allowedOrigins = [
+  'https://unilearn-plus-y00m2cyypa.edgeone.dev',
+  'http://localhost:5173' // Aapka local frontend
+];
+
 app.use(cors({
-  origin: 'https://unilearn-plus-y00m2cyypa.edgeone.dev', // EdgeOne frontend URL
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+
 app.use(bodyParser.json());
 
-// Images/Videos
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// ✅ FIX 2: Static files (Vercel par uploads folder nahi chalta, but code crash na ho isliye path theek kiya)
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // MongoDB
-const connectionString = process.env.MONGO_URI || 'mongodb+srv://saad489254_db_user:xxxx@cluster0.uvtqxwb.mongodb.net/unilearn_plus?retryWrites=true&w=majority';
+const connectionString = process.env.MONGO_URI;
+if (!connectionString) {
+    console.error("❌ MONGO_URI is missing in Environment Variables!");
+}
+
 mongoose.connect(connectionString)
   .then(() => console.log('✅ Connected to MongoDB Atlas'))
   .catch((err) => console.error('❌ MongoDB Error:', err.message));
 
-// Routes
+// ✅ FIX 3: Routes ke require ko path.join ke saath likhna zyada safe hai
 app.use('/api/users', require('./routes/authRoutes'));
 app.use('/api/courses', require('./routes/courseRoutes'));
 app.use('/api/enrollments', require('./routes/enrollmentRoutes'));
@@ -31,15 +47,12 @@ app.use('/api/workshops', require('./routes/workshopRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 
-// Health check route
 app.get('/api/health', (req, res) => {
   res.json({ status: 'UniLearn+ Backend Online 🟢' });
 });
 
-// Default route
 app.get('/', (req, res) => {
   res.json({ status: 'UniLearn+ Backend Root Online 🟢' });
 });
 
-// ❌ Remove app.listen() for Vercel
 module.exports = app;

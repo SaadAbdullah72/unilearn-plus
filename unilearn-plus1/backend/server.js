@@ -29,15 +29,16 @@ app.use(bodyParser.json());
 // ✅ FIX 2: Static files (Vercel par uploads folder nahi chalta, but code crash na ho isliye path theek kiya)
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// MongoDB
-const connectionString = process.env.MONGO_URI;
-if (!connectionString) {
-    console.error("❌ MONGO_URI is missing in Environment Variables!");
+// connectionString ke bajaye seedha process.env use karo
+const mongoURI = process.env.MONGO_URI;
+
+if (!mongoURI) {
+    console.error("❌ CRITICAL ERROR: MONGO_URI is missing in Environment Variables!");
 }
 
-mongoose.connect(connectionString)
+mongoose.connect(mongoURI)
   .then(() => console.log('✅ Connected to MongoDB Atlas'))
-  .catch((err) => console.error('❌ MongoDB Error:', err.message));
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
 // ✅ FIX 3: Routes ke require ko path.join ke saath likhna zyada safe hai
 app.use('/api/users', require('./routes/authRoutes'));

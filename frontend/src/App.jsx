@@ -3,7 +3,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 
 // Import Pages
-import Login from './pages/Login';
+import Login from './pages/login.jsx';
 import Signup from './pages/Signup';
 import CourseList from './pages/CourseList';
 import AddEditCourse from './pages/AddEditCourse';

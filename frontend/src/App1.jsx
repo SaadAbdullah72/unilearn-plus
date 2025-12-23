@@ -14,7 +14,7 @@ import ChatBot from './components/ChatBot';
 import CourseClassroom from './pages/CourseClassroom';
 import AddWorkshop from './pages/AddWorkshop';
 const App = () => {
-  axios.defaults.baseURL = 'https://unilearn-backend.vercel.app';
+  axios.defaults.baseURL = 'http://127.0.0.1:5000';
   const [user, setUser] = useState(null);
 
   useEffect(() => {

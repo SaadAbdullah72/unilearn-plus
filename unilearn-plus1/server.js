@@ -24,12 +24,12 @@ mongoose.connect(connectionString)
   .catch((err) => console.error('❌ MongoDB Error:', err.message));
 
 // Routes
-app.use('/api/users', require('./routes/authRoutes'));
-app.use('/api/courses', require('./routes/courseRoutes'));
-app.use('/api/enrollments', require('./routes/enrollmentRoutes'));
-app.use('/api/workshops', require('./routes/workshopRoutes'));
-app.use('/api/payment', require('./routes/paymentRoutes'));
-app.use('/api/chat', require('./routes/chatRoutes'));
+app.use('/api/users', require('./backend/routes/authRoutes'));
+app.use('/api/courses', require('./backend/routes/courseRoutes'));
+app.use('/api/enrollments', require('./backend/routes/enrollmentRoutes'));
+app.use('/api/workshops', require('./backend/routes/workshopRoutes'));
+app.use('/api/payment', require('./backend/routes/paymentRoutes'));
+app.use('/api/chat', require('./backend/routes/chatRoutes'));
 
 // Health check route
 app.get('/api/health', (req, res) => {

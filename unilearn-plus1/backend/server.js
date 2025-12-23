@@ -1,59 +1,40 @@
-require('dotenv').config(); // SABSE UPAR (Line 1)
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const path = require('path');
 
-
 const app = express();
-const port = 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://unilearn-plus-47oz9dlt57.edgeone.dev/', // ya tumhare frontend domain, EdgeOne
+  credentials: true
+}));
 app.use(bodyParser.json());
 
-// Images/Videos ke liye Uploads Folder Public karo
+// Images/Videos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// --- MONGODB CONNECTION ---
-// Note: Apni connection string yahan check kar lena
-const connectionString = 'mongodb+srv://saad489254_db_user:v2sbdVNjdrfQ6yHl@cluster0.uvtqxwb.mongodb.net/unilearn_plus?retryWrites=true&w=majority&appName=Cluster0';
-
+// MongoDB
+const connectionString = process.env.MONGO_URI || 'mongodb+srv://saad489254_db_user:xxxx@cluster0.uvtqxwb.mongodb.net/unilearn_plus?retryWrites=true&w=majority';
 mongoose.connect(connectionString)
   .then(() => console.log('✅ Connected to MongoDB Atlas'))
   .catch((err) => console.error('❌ MongoDB Error:', err.message));
 
-// --- IMPORT ROUTES ---
-const authRoutes = require('./routes/authRoutes');
-const courseRoutes = require('./routes/courseRoutes');
-const enrollmentRoutes = require('./routes/enrollmentRoutes');
-const workshopRoutes = require('./routes/workshopRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
-const chatRoutes = require('./routes/chatRoutes'); // <--- YEH MISSING THA SHAYAD
+// Routes
+app.use('/api/users', require('./routes/authRoutes'));
+app.use('/api/courses', require('./routes/courseRoutes'));
+app.use('/api/enrollments', require('./routes/enrollmentRoutes'));
+app.use('/api/workshops', require('./routes/workshopRoutes'));
+app.use('/api/payment', require('./routes/paymentRoutes'));
+app.use('/api/chat', require('./routes/chatRoutes'));
 
-// --- USE ROUTES ---
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/api/users', authRoutes);
-app.use('/api/courses', courseRoutes);
-app.use('/api/enrollments', enrollmentRoutes);
-app.use('/api/workshops', workshopRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/chat', chatRoutes); // <--- CHATBOT ROUTE ACTIVE
-
-app.use(cors({
-  origin: 'http://localhost:3000', // React frontend
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type']
-}));
-
-// Default Route
+// Default route
 app.get('/', (req, res) => {
-    res.send('UniLearn+ Server Systems Online 🟢');
+  res.json({ status: 'UniLearn+ Backend Online 🟢' });
 });
 
-// Server Start
-app.listen(port, () => {
-    console.log(`🚀 Server running on port ${port}`);
-});
+// ❌ Remove app.listen() for Vercel
+module.exports = app; // <-- Important: Export app

@@ -9,7 +9,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'https://unilearn-plus-y00m2cyypa.edgeone.dev/', // ya tumhare frontend domain, EdgeOne
+  origin: 'https://unilearn-plus-y00m2cyypa.edgeone.dev/', // EdgeOne frontend URL
   credentials: true
 }));
 app.use(bodyParser.json());
@@ -31,10 +31,15 @@ app.use('/api/workshops', require('./routes/workshopRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 
-// Default route
-app.get('/', (req, res) => {
+// Health check route
+app.get('/api/health', (req, res) => {
   res.json({ status: 'UniLearn+ Backend Online 🟢' });
 });
 
+// Default route
+app.get('/', (req, res) => {
+  res.json({ status: 'UniLearn+ Backend Root Online 🟢' });
+});
+
 // ❌ Remove app.listen() for Vercel
-module.exports = app; // <-- Important: Export app
+module.exports = app;

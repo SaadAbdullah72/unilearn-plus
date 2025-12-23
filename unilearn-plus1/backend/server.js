@@ -9,7 +9,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'https://unilearn-plus-47oz9dlt57.edgeone.dev/', // ya tumhare frontend domain, EdgeOne
+  origin: 'https://unilearn-plus-y00m2cyypa.edgeone.dev/', // ya tumhare frontend domain, EdgeOne
   credentials: true
 }));
 app.use(bodyParser.json());

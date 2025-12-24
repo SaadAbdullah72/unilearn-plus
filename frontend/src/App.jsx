@@ -13,9 +13,11 @@ import MyLearning from './pages/MyLearning';
 import ChatBot from './components/ChatBot';
 import CourseClassroom from './pages/CourseClassroom';
 import AddWorkshop from './pages/AddWorkshop';
+
 const App = () => {
   axios.defaults.baseURL = 'https://unilearn-backend.vercel.app';
   const [user, setUser] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -32,7 +34,7 @@ const App = () => {
   };
 
   return (
-    <div className="bg-[#030303] min-h-screen p-4 flex justify-center">
+    <div className="bg-[#030303] min-h-screen p-2 md:p-4 flex justify-center">
       
       {/* SNAKE BORDER CONTAINER */}
       <div className="snake-border-wrapper w-full max-w-[1800px] min-h-[95vh]">
@@ -41,61 +43,132 @@ const App = () => {
             <Router>
                 <ChatBot />
 
-                {/* ENHANCED NAVBAR */}
-                <nav className="fixed top-4 left-0 right-0 z-50 flex justify-center">
-                    <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-full px-8 py-3 flex items-center gap-12 shadow-2xl shadow-cyan-900/30">
-                        <Link to="/" className="font-tech text-2xl font-bold tracking-wider text-white flex items-center gap-2">
-                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                            UNILEARN
-                            <span className="text-xs text-cyan-400 font-normal ml-2">v4.2</span>
-                        </Link>
+                {/* MOBILE RESPONSIVE NAVBAR */}
+                <nav className="fixed top-2 md:top-4 left-0 right-0 z-50 flex justify-center px-2">
+                    <div className="bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-full px-4 md:px-8 py-3 flex items-center justify-between w-full max-w-[1800px] shadow-2xl shadow-cyan-900/30">
                         
-                        <div className="hidden md:flex gap-8 text-xs font-medium uppercase tracking-widest text-slate-400">
+                        {/* Logo */}
+                        <Link to="/" className="font-tech text-xl md:text-2xl font-bold tracking-wider text-white flex items-center gap-1 md:gap-2">
+                            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                            UNILEARN
+                            <span className="text-[10px] md:text-xs text-cyan-400 font-normal ml-1 md:ml-2">v4.2</span>
+                        </Link>
+
+                        {/* Desktop Navigation */}
+                        <div className="hidden md:flex gap-6 lg:gap-8 text-xs font-medium uppercase tracking-widest text-slate-400">
                             <Link to="/" className="hover:text-white transition hover:scale-105">Home</Link>
                             <Link to="/courses" className="hover:text-white transition hover:scale-105">Catalog</Link>
                             <Link to="/workshops" className="hover:text-white transition hover:scale-105">Live Ops</Link>
                             <Link to="/mylearning" className="hover:text-white transition hover:scale-105">Dashboard</Link>
                             <Link to="/admin" className="text-amber-500 hover:text-amber-300 transition hover:scale-105">Admin</Link>
 
-                            {/* ✅ FIX 3: Upload Button Wapis Laga Diya */}
-                        {user?.role === 'instructor' && (
-                            <Link to="/add-course" className="text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded hover:bg-cyan-500 hover:text-black transition font-bold">
-                                + Upload
-                            </Link>
-                        )}
-
-                        {/* Navbar ke andar instructor check ke paas */}
-{user?.role === 'instructor' && (
-    <div className="flex gap-2">
-        <Link to="/add-course" className="text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded hover:bg-cyan-500 hover:text-black transition font-bold text-xs">
-            + Course
-        </Link>
-        <Link to="/add-workshop" className="text-pink-400 border border-pink-500/30 px-3 py-1 rounded hover:bg-pink-500 hover:text-black transition font-bold text-xs">
-            + Workshop
-        </Link>
-    </div>
-)}
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            {user ? (
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span className="text-xs text-green-400">{user.name || 'User'}</span>
-                                    <button onClick={handleLogout} className="text-xs font-bold text-red-400 hover:text-red-300 px-3 py-1 border border-red-500/30 rounded-full transition">DISCONNECT</button>
-                                </div>
-                            ) : (
-                                <div className="flex gap-3">
-                                    <Link to="/login" className="text-xs font-bold bg-white text-black px-5 py-2 rounded-full hover:bg-cyan-400 transition hover:scale-105">LOGIN</Link>
-                                    <Link to="/signup" className="text-xs font-bold border border-cyan-500 text-cyan-400 px-5 py-2 rounded-full hover:bg-cyan-500 hover:text-black transition hover:scale-105">SIGN UP</Link>
+                            {user?.role === 'instructor' && (
+                                <div className="flex gap-2">
+                                    <Link to="/add-course" className="text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded text-xs hover:bg-cyan-500 hover:text-black transition font-bold">
+                                        + Course
+                                    </Link>
+                                    <Link to="/add-workshop" className="text-pink-400 border border-pink-500/30 px-3 py-1 rounded text-xs hover:bg-pink-500 hover:text-black transition font-bold">
+                                        + Workshop
+                                    </Link>
                                 </div>
                             )}
                         </div>
+
+                        {/* Mobile Menu Button */}
+                        <div className="flex items-center gap-2 md:gap-4">
+                            {user?.role === 'instructor' && (
+                                <div className="md:hidden flex gap-1">
+                                    <Link to="/add-course" className="text-cyan-400 border border-cyan-500/30 px-2 py-1 rounded text-[10px] hover:bg-cyan-500 hover:text-black transition font-bold">
+                                        + Course
+                                    </Link>
+                                    <Link to="/add-workshop" className="text-pink-400 border border-pink-500/30 px-2 py-1 rounded text-[10px] hover:bg-pink-500 hover:text-black transition font-bold">
+                                        + Workshop
+                                    </Link>
+                                </div>
+                            )}
+
+                            <button 
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="md:hidden text-white p-1.5"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {isMenuOpen ? (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    ) : (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    )}
+                                </svg>
+                            </button>
+
+                            {/* User/Auth Buttons */}
+                            <div className="hidden md:flex items-center gap-4">
+                                {user ? (
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                        <span className="text-xs text-green-400">{user.name || 'User'}</span>
+                                        <button onClick={handleLogout} className="text-xs font-bold text-red-400 hover:text-red-300 px-3 py-1 border border-red-500/30 rounded-full transition">DISCONNECT</button>
+                                    </div>
+                                ) : (
+                                    <div className="flex gap-3">
+                                        <Link to="/login" className="text-xs font-bold bg-white text-black px-5 py-2 rounded-full hover:bg-cyan-400 transition hover:scale-105">LOGIN</Link>
+                                        <Link to="/signup" className="text-xs font-bold border border-cyan-500 text-cyan-400 px-5 py-2 rounded-full hover:bg-cyan-500 hover:text-black transition hover:scale-105">SIGN UP</Link>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
+
+                    {/* Mobile Menu */}
+                    {isMenuOpen && (
+                        <div className="absolute top-16 left-4 right-4 md:hidden bg-black/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-cyan-900/30 z-50 p-6">
+                            <div className="flex flex-col gap-4 mb-6">
+                                <Link to="/" className="text-white hover:text-cyan-300 transition py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Home</Link>
+                                <Link to="/courses" className="text-white hover:text-cyan-300 transition py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Catalog</Link>
+                                <Link to="/workshops" className="text-white hover:text-cyan-300 transition py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Live Ops</Link>
+                                <Link to="/mylearning" className="text-white hover:text-cyan-300 transition py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                                <Link to="/admin" className="text-amber-500 hover:text-amber-300 transition py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Admin</Link>
+                            </div>
+                            
+                            {user ? (
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex items-center gap-2 text-green-400">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                        <span className="text-sm">{user.name || 'User'}</span>
+                                    </div>
+                                    <button 
+                                        onClick={() => {
+                                            handleLogout();
+                                            setIsMenuOpen(false);
+                                        }} 
+                                        className="text-sm font-bold text-red-400 hover:text-red-300 py-2 border border-red-500/30 rounded-full transition"
+                                    >
+                                        DISCONNECT
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col gap-3">
+                                    <Link 
+                                        to="/login" 
+                                        className="text-center text-sm font-bold bg-white text-black py-3 rounded-full hover:bg-cyan-400 transition"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        LOGIN
+                                    </Link>
+                                    <Link 
+                                        to="/signup" 
+                                        className="text-center text-sm font-bold border border-cyan-500 text-cyan-400 py-3 rounded-full hover:bg-cyan-500 hover:text-black transition"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        SIGN UP
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </nav>
 
                 {/* ROUTES */}
-                <div className="flex-grow">
+                <div className="flex-grow pt-20 md:pt-0">
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/courses" element={<CourseList />} />
@@ -107,17 +180,16 @@ const App = () => {
                         <Route path="/add-course" element={user ? <AddEditCourse /> : <Navigate to="/login" />} />
                         <Route path="/edit-course/:id" element={user ? <AddEditCourse /> : <Navigate to="/login" />} />
                         <Route path="/course/:id/learn" element={<CourseClassroom />} />
-                        {/* Instructor Routes mein add karo */}
-<Route path="/add-workshop" element={user ? <AddWorkshop /> : <Navigate to="/login" />} />
+                        <Route path="/add-workshop" element={user ? <AddWorkshop /> : <Navigate to="/login" />} />
                     </Routes>
                 </div>
 
-                {/* ENHANCED FOOTER */}
-                <footer className="bg-black/50 border-t border-white/5 py-12 text-center relative overflow-hidden">
+                {/* RESPONSIVE FOOTER */}
+                <footer className="bg-black/50 border-t border-white/5 py-8 md:py-12 text-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50"></div>
-                    <div className="relative z-10">
+                    <div className="relative z-10 px-4">
                         <p className="text-xs text-slate-600 font-mono mb-4">SECURE CONNECTION ESTABLISHED // UNILEARN SYSTEMS © 2025</p>
-                        <div className="flex justify-center gap-8 mt-6">
+                        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mt-4 md:mt-6">
                             <a href="#" className="text-slate-500 hover:text-white text-xs transition">Privacy Protocol</a>
                             <a href="#" className="text-slate-500 hover:text-white text-xs transition">Security Audit</a>
                             <a href="#" className="text-slate-500 hover:text-white text-xs transition">API Documentation</a>
@@ -133,47 +205,45 @@ const App = () => {
   );
 };
 
-// IMPROVED HOME PAGE WITH BETTER VISIBILITY AND BACKGROUNDS
+// MOBILE-OPTIMIZED HOME PAGE
 const Home = () => {
   const [activeTab, setActiveTab] = useState('trending');
   
   return (
     <div className="w-full text-slate-100">
         
-        {/* 1. ENHANCED HERO SECTION - WITH CLEAR TEXT */}
-        <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-            {/* Enhanced Background with better visibility */}
+        {/* 1. RESPONSIVE HERO SECTION */}
+        <div className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-0">
             <div className="absolute inset-0">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-black to-purple-900/20"></div>
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-500/10 via-transparent to-transparent"></div>
-                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop
-              " 
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop" 
                      className="w-full h-full object-cover opacity-25" alt="AI Neural Network" />
                 <div className="absolute inset-0 bg-black/40"></div>
             </div>
 
-            <div className="relative z-10 text-center px-4 mt-20 max-w-6xl mx-auto">
-                <div className="inline-flex items-center gap-2 border border-white/20 bg-black/70 backdrop-blur-md px-6 py-2 rounded-full mb-8 shadow-xl">
+            <div className="relative z-10 text-center px-4 mt-20 md:mt-0 max-w-6xl mx-auto">
+                <div className="inline-flex items-center gap-2 border border-white/20 bg-black/70 backdrop-blur-md px-4 md:px-6 py-2 rounded-full mb-6 md:mb-8 shadow-xl">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-cyan-300 text-xs font-bold uppercase tracking-[0.3em] font-sans">System Online • 50,321 Active Users</span>
+                    <span className="text-cyan-300 text-xs font-bold uppercase tracking-wider md:tracking-[0.3em] font-sans">System Online • 50,321 Active Users</span>
                 </div>
                 
-                <h1 className="font-sans text-7xl md:text-9xl font-black text-white leading-[0.85] tracking-tight mb-8 drop-shadow-2xl">
-                    Build  <br/>
+                <h1 className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-black text-white leading-[0.9] md:leading-[0.85] tracking-tight mb-6 md:mb-8 drop-shadow-2xl">
+                    Build  <br className="hidden md:block"/>
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300 animate-gradient">
                         The Future
                     </span>
                 </h1>
                 
-                <p className="text-2xl text-slate-200 mb-12 max-w-2xl mx-auto font-normal leading-relaxed font-sans">
-                    Master cutting-edge technologies with industry-grade curriculum. From <span className="text-cyan-300 font-semibold">Quantum Computing</span> to <span className="text-purple-300 font-semibold">Blockchain Architecture</span> and <span className="text-red-300 font-semibold">Cybersecurity Operations</span>.
+                <p className="text-lg md:text-xl lg:text-2xl text-slate-200 mb-8 md:mb-12 max-w-2xl mx-auto font-normal leading-relaxed font-sans px-4">
+                    Master cutting-edge technologies with industry-grade curriculum. From <span className="text-cyan-300 font-semibold">Quantum Computing</span> to <span className="text-purple-300 font-semibold">Blockchain</span>.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row justify-center gap-6">
-                    <Link to="/signup" className="px-12 py-5 bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold text-sm uppercase tracking-widest hover:shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105 font-sans">
+                <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 px-4">
+                    <Link to="/signup" className="px-8 md:px-12 py-4 md:py-5 bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold text-sm uppercase tracking-widest hover:shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105 font-sans rounded-lg md:rounded-full">
                         Start Learning Free
                     </Link>
-                    <Link to="/courses" className="px-12 py-5 border-2 border-white/40 text-white font-bold text-sm uppercase tracking-widest hover:bg-white/20 hover:border-white/70 transition-all duration-300 group font-sans">
+                    <Link to="/courses" className="px-8 md:px-12 py-4 md:py-5 border-2 border-white/40 text-white font-bold text-sm uppercase tracking-widest hover:bg-white/20 hover:border-white/70 transition-all duration-300 group font-sans rounded-lg md:rounded-full">
                         <span className="flex items-center justify-center gap-2">
                             Explore 120+ Courses
                             <span className="group-hover:translate-x-2 transition">→</span>
@@ -181,8 +251,8 @@ const Home = () => {
                     </Link>
                 </div>
                 
-                {/* Stats Bar with better visibility */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 pt-12 border-t border-white/20">
+                {/* Responsive Stats Bar */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mt-12 md:mt-20 pt-8 md:pt-12 border-t border-white/20 mx-4 md:mx-0">
                     {[
                         { value: "98.7%", label: "Completion Rate" },
                         { value: "24/7", label: "Live Support" },
@@ -190,32 +260,27 @@ const Home = () => {
                         { value: "1000+", label: "Projects Built" }
                     ].map((stat, index) => (
                         <div key={index} className="text-center">
-                            <div className="text-4xl font-black text-white mb-2 font-sans drop-shadow-lg">{stat.value}</div>
-                            <div className="text-sm text-cyan-100 uppercase tracking-widest font-sans">{stat.label}</div>
+                            <div className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-2 font-sans drop-shadow-lg">{stat.value}</div>
+                            <div className="text-xs md:text-sm text-cyan-100 uppercase tracking-wider font-sans">{stat.label}</div>
                         </div>
                     ))}
                 </div>
             </div>
         </div>
 
-        {/* 2. TECH ECOSYSTEM MARQUEE - WITH BACKGROUND */}
-        <div className="py-16 border-y border-white/10 bg-gradient-to-r from-black via-cyan-900/20 to-black relative overflow-hidden">
+        {/* 2. TECH ECOSYSTEM MARQUEE - MOBILE FRIENDLY */}
+        <div className="py-12 md:py-16 border-y border-white/10 bg-gradient-to-r from-black via-cyan-900/20 to-black relative overflow-hidden">
             <div className="absolute inset-0 opacity-30">
                 <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2070&auto=format&fit=crop" 
                      className="w-full h-full object-cover" alt="Tech Pattern" />
                 <div className="absolute inset-0 bg-black/70"></div>
             </div>
-            <div className="container mx-auto px-6 relative z-10">
-                <p className="text-sm text-cyan-300 uppercase tracking-widest mb-8 text-center font-sans font-semibold">TRUSTED BY ENGINEERS AT</p>
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <p className="text-xs md:text-sm text-cyan-300 uppercase tracking-wider md:tracking-widest mb-6 md:mb-8 text-center font-sans font-semibold">TRUSTED BY ENGINEERS AT</p>
                 <div className="flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-                    <div className="flex gap-16 animate-marquee whitespace-nowrap py-4">
+                    <div className="flex gap-8 md:gap-16 animate-marquee whitespace-nowrap py-4">
                         {["GOOGLE", "OPENAI", "MICROSOFT", "SPACEX", "NVIDIA", "COINBASE", "META", "TESLA", "AMAZON AWS", "IBM", "INTEL", "NETFLIX"].map((tech, i) => (
-                            <span key={i} className="font-sans text-3xl font-black text-white/40 hover:text-white/70 transition duration-300">
-                                {tech}
-                            </span>
-                        ))}
-                        {["GOOGLE", "OPENAI", "MICROSOFT", "SPACEX", "NVIDIA", "COINBASE", "META", "TESLA", "AMAZON AWS", "IBM", "INTEL", "NETFLIX"].map((tech, i) => (
-                            <span key={i+12} className="font-sans text-3xl font-black text-white/40 hover:text-white/70 transition duration-300">
+                            <span key={i} className="font-sans text-xl md:text-2xl lg:text-3xl font-black text-white/40 hover:text-white/70 transition duration-300">
                                 {tech}
                             </span>
                         ))}
@@ -224,25 +289,24 @@ const Home = () => {
             </div>
         </div>
 
-        {/* 3. FEATURED LEARNING TRACKS - WITH BACKGROUND IMAGES */}
-        <div className="py-32 relative overflow-hidden">
+        {/* 3. RESPONSIVE FEATURED LEARNING TRACKS */}
+        <div className="py-16 md:py-32 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-900/10 to-black opacity-50"></div>
-            <div className="container mx-auto px-6 relative z-10">
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-20">
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 md:mb-20">
                     <div className="max-w-2xl">
-                        <h2 className="font-sans text-6xl font-black text-white mb-6 drop-shadow-lg">SPECIALIZATION TRACKS</h2>
-                        <p className="text-xl text-slate-200 leading-relaxed font-sans">
-                            Dive deep into specialized fields with structured learning paths designed by industry leaders. 
-                            Each track includes real-world projects, certifications, and portfolio development.
+                        <h2 className="font-sans text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 md:mb-6 drop-shadow-lg">SPECIALIZATION TRACKS</h2>
+                        <p className="text-base md:text-xl text-slate-200 leading-relaxed font-sans">
+                            Dive deep into specialized fields with structured learning paths designed by industry leaders.
                         </p>
                     </div>
-                    <div className="mt-8 lg:mt-0">
-                        <div className="flex gap-2 bg-black/70 backdrop-blur-sm rounded-full p-1 border border-white/20">
+                    <div className="mt-6 md:mt-8 lg:mt-0">
+                        <div className="flex flex-wrap gap-2 bg-black/70 backdrop-blur-sm rounded-full p-1 border border-white/20">
                             {['trending', 'ai', 'web3', 'security'].map(tab => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
-                                    className={`px-6 py-2 rounded-full text-sm font-bold uppercase transition font-sans ${activeTab === tab ? 'bg-cyan-400 text-black' : 'text-slate-300 hover:text-white'}`}
+                                    className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-bold uppercase transition font-sans ${activeTab === tab ? 'bg-cyan-400 text-black' : 'text-slate-300 hover:text-white'}`}
                                 >
                                     {tab}
                                 </button>
@@ -251,13 +315,13 @@ const Home = () => {
                     </div>
                 </div>
 
-                {/* Enhanced Tracks Grid with better text visibility */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {/* Responsive Tracks Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                     {[
                         {
                             category: "AI & MACHINE LEARNING",
                             title: "Autonomous AI Agents",
-                            description: "Build self-improving AI systems with reinforcement learning and neural architectures",
+                            description: "Build self-improving AI systems with reinforcement learning",
                             image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&auto=format&fit=crop",
                             color: "cyan",
                             modules: 24,
@@ -266,7 +330,7 @@ const Home = () => {
                         {
                             category: "BLOCKCHAIN & WEB3",
                             title: "DeFi Protocol Development",
-                            description: "Master smart contracts, tokenomics, and decentralized finance systems",
+                            description: "Master smart contracts, tokenomics, and DeFi systems",
                             image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2070&auto=format&fit=crop",
                             color: "purple",
                             modules: 18,
@@ -275,7 +339,7 @@ const Home = () => {
                         {
                             category: "CYBERSECURITY",
                             title: "Ethical Hacking & Defense",
-                            description: "Advanced penetration testing, cryptography, and network security",
+                            description: "Advanced penetration testing and network security",
                             image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2074&auto=format&fit=crop",
                             color: "red",
                             modules: 22,
@@ -284,14 +348,14 @@ const Home = () => {
                         {
                             category: "QUANTUM COMPUTING",
                             title: "Quantum Algorithms",
-                            description: "Explore quantum supremacy and next-generation computing paradigms",
+                            description: "Explore quantum supremacy and computing paradigms",
                             image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2070&auto=format&fit=crop",
                             color: "blue",
                             modules: 16,
                             duration: "3 months"
                         }
                     ].map((track, index) => (
-                        <div key={index} className="group relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-b from-black/70 to-black/90 hover:border-cyan-500 transition-all duration-500 hover:scale-[1.02] shadow-2xl shadow-black/50">
+                        <div key={index} className="group relative overflow-hidden rounded-xl md:rounded-2xl border border-white/20 bg-gradient-to-b from-black/70 to-black/90 hover:border-cyan-500 transition-all duration-500 hover:scale-[1.02] shadow-2xl shadow-black/50">
                             <div className="absolute inset-0">
                                 <img 
                                     src={track.image} 
@@ -300,25 +364,25 @@ const Home = () => {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
                             </div>
-                            <div className="relative p-8 h-[400px] flex flex-col justify-between">
+                            <div className="relative p-6 md:p-8 h-[350px] md:h-[400px] flex flex-col justify-between">
                                 <div>
-                                    <div className={`text-${track.color === 'cyan' ? 'cyan-300' : track.color === 'purple' ? 'purple-300' : track.color === 'red' ? 'red-300' : 'blue-300'} text-sm font-bold mb-4 tracking-widest font-sans`}>
+                                    <div className={`text-${track.color === 'cyan' ? 'cyan-300' : track.color === 'purple' ? 'purple-300' : track.color === 'red' ? 'red-300' : 'blue-300'} text-xs md:text-sm font-bold mb-3 md:mb-4 tracking-wider font-sans`}>
                                         {track.category}
                                     </div>
-                                    <h3 className="font-sans text-3xl font-black text-white mb-4 leading-tight drop-shadow-lg">
+                                    <h3 className="font-sans text-xl md:text-2xl lg:text-3xl font-black text-white mb-3 md:mb-4 leading-tight drop-shadow-lg">
                                         {track.title}
                                     </h3>
-                                    <p className="text-slate-100 text-base leading-relaxed mb-6 font-sans">
+                                    <p className="text-slate-100 text-sm md:text-base leading-relaxed mb-4 md:mb-6 font-sans">
                                         {track.description}
                                     </p>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <div className="flex gap-4 text-sm text-slate-300 font-sans">
+                                    <div className="flex gap-2 md:gap-4 text-xs md:text-sm text-slate-300 font-sans">
                                         <span className="font-semibold">{track.modules} modules</span>
                                         <span>•</span>
                                         <span className="font-semibold">{track.duration}</span>
                                     </div>
-                                    <button className="px-5 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-bold rounded-full hover:bg-cyan-400 hover:text-black transition font-sans">
+                                    <button className="px-4 py-1.5 md:px-5 md:py-2 bg-white/20 backdrop-blur-sm text-white text-xs md:text-sm font-bold rounded-full hover:bg-cyan-400 hover:text-black transition font-sans">
                                         EXPLORE
                                     </button>
                                 </div>
@@ -329,48 +393,48 @@ const Home = () => {
             </div>
         </div>
 
-        {/* 4. LEARNING METHODOLOGY - WITH BETTER BACKGROUND */}
-        <div className="py-24 relative overflow-hidden">
+        {/* 4. RESPONSIVE LEARNING METHODOLOGY */}
+        <div className="py-16 md:py-24 relative overflow-hidden">
             <div className="absolute inset-0">
                 <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop" 
                      className="w-full h-full object-cover opacity-20" alt="Code Background" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/80"></div>
             </div>
-            <div className="container mx-auto px-6 relative z-10">
-                <h2 className="font-sans text-5xl font-black text-white mb-4 text-center drop-shadow-lg">HOW WE TRAIN ELITE ENGINEERS</h2>
-                <p className="text-xl text-slate-200 text-center mb-16 max-w-3xl mx-auto font-sans">
-                    Our methodology combines theoretical depth with practical implementation, ensuring you're job-ready from day one.
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <h2 className="font-sans text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 text-center drop-shadow-lg">HOW WE TRAIN ELITE ENGINEERS</h2>
+                <p className="text-base md:text-xl text-slate-200 text-center mb-12 md:mb-16 max-w-3xl mx-auto font-sans">
+                    Our methodology combines theoretical depth with practical implementation.
                 </p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                     {[
                         {
                             icon: "⚡",
                             title: "Project-Based Learning",
-                            description: "Build 5+ production-ready projects per specialization. Each project is reviewed by industry experts.",
+                            description: "Build 5+ production-ready projects per specialization.",
                             features: ["Real-world scenarios", "Code reviews", "Deployment pipelines"]
                         },
                         {
                             icon: "🎯",
                             title: "1:1 Mentorship",
-                            description: "Weekly sessions with senior engineers from top tech companies. Get personalized guidance and career advice.",
+                            description: "Weekly sessions with senior engineers from top tech companies.",
                             features: ["Industry insights", "Career planning", "Technical guidance"]
                         },
                         {
                             icon: "🚀",
                             title: "Live Deployment",
-                            description: "Deploy your projects on actual infrastructure. Learn DevOps, monitoring, and scaling in real environments.",
+                            description: "Deploy your projects on actual infrastructure.",
                             features: ["Cloud platforms", "CI/CD pipelines", "Performance optimization"]
                         }
                     ].map((method, index) => (
-                        <div key={index} className="bg-gradient-to-br from-white/10 to-transparent border border-white/20 rounded-2xl p-8 hover:border-cyan-400/50 transition duration-500 group backdrop-blur-sm">
-                            <div className="text-5xl mb-6">{method.icon}</div>
-                            <h3 className="text-2xl font-black text-white mb-4 font-sans">{method.title}</h3>
-                            <p className="text-slate-200 mb-6 text-lg font-sans">{method.description}</p>
-                            <ul className="space-y-3">
+                        <div key={index} className="bg-gradient-to-br from-white/10 to-transparent border border-white/20 rounded-xl md:rounded-2xl p-6 md:p-8 hover:border-cyan-400/50 transition duration-500 group backdrop-blur-sm">
+                            <div className="text-4xl md:text-5xl mb-4 md:mb-6">{method.icon}</div>
+                            <h3 className="text-xl md:text-2xl font-black text-white mb-3 md:mb-4 font-sans">{method.title}</h3>
+                            <p className="text-slate-200 mb-4 md:mb-6 text-base md:text-lg font-sans">{method.description}</p>
+                            <ul className="space-y-2 md:space-y-3">
                                 {method.features.map((feature, i) => (
-                                    <li key={i} className="flex items-center text-base text-white font-sans">
-                                        <div className="w-2 h-2 bg-cyan-400 rounded-full mr-3"></div>
+                                    <li key={i} className="flex items-center text-sm md:text-base text-white font-sans">
+                                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-cyan-400 rounded-full mr-2 md:mr-3"></div>
                                         {feature}
                                     </li>
                                 ))}
@@ -381,17 +445,17 @@ const Home = () => {
             </div>
         </div>
 
-        {/* 5. STUDENT SUCCESS STORIES - WITH BACKGROUND */}
-        <div className="py-32 relative overflow-hidden">
+        {/* 5. RESPONSIVE STUDENT SUCCESS STORIES */}
+        <div className="py-16 md:py-32 relative overflow-hidden">
             <div className="absolute inset-0">
                 <img src="https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?q=80&w=2076&auto=format&fit=crop" 
                      className="w-full h-full object-cover opacity-30" alt="Office Background" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/80"></div>
             </div>
-            <div className="container mx-auto px-6 relative z-10">
-                <h2 className="font-sans text-5xl font-black text-white mb-16 text-center drop-shadow-lg">FROM ZERO TO HERO</h2>
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <h2 className="font-sans text-3xl md:text-4xl lg:text-5xl font-black text-white mb-12 md:mb-16 text-center drop-shadow-lg">FROM ZERO TO HERO</h2>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16">
                     {[
                         {
                             name: "Sarah Chen",
@@ -415,22 +479,22 @@ const Home = () => {
                             salary: "$350K"
                         }
                     ].map((student, index) => (
-                        <div key={index} className="bg-gradient-to-br from-black/60 to-transparent border border-white/20 rounded-2xl p-8 hover:border-cyan-400/50 transition duration-500 backdrop-blur-sm">
-                            <div className="flex items-center gap-4 mb-6">
+                        <div key={index} className="bg-gradient-to-br from-black/60 to-transparent border border-white/20 rounded-xl md:rounded-2xl p-6 md:p-8 hover:border-cyan-400/50 transition duration-500 backdrop-blur-sm">
+                            <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                                 <img 
                                     src={student.avatar} 
-                                    className="w-20 h-20 rounded-full object-cover border-2 border-cyan-400/70"
+                                    className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-2 border-cyan-400/70"
                                     alt={student.name}
                                 />
                                 <div>
-                                    <h4 className="text-2xl font-black text-white font-sans">{student.name}</h4>
-                                    <p className="text-cyan-300 text-base font-sans font-semibold">{student.role}</p>
+                                    <h4 className="text-xl md:text-2xl font-black text-white font-sans">{student.name}</h4>
+                                    <p className="text-cyan-300 text-sm md:text-base font-sans font-semibold">{student.role}</p>
                                 </div>
                             </div>
-                            <p className="text-slate-100 text-lg mb-6 italic font-sans">"{student.story}"</p>
-                            <div className="flex justify-between items-center pt-6 border-t border-white/20">
-                                <span className="text-sm text-cyan-100 font-sans">Annual Compensation</span>
-                                <span className="text-3xl font-black text-green-400 font-sans drop-shadow-lg">{student.salary}</span>
+                            <p className="text-slate-100 text-base md:text-lg mb-4 md:mb-6 italic font-sans">"{student.story}"</p>
+                            <div className="flex justify-between items-center pt-4 md:pt-6 border-t border-white/20">
+                                <span className="text-xs md:text-sm text-cyan-100 font-sans">Annual Compensation</span>
+                                <span className="text-2xl md:text-3xl font-black text-green-400 font-sans drop-shadow-lg">{student.salary}</span>
                             </div>
                         </div>
                     ))}
@@ -438,25 +502,25 @@ const Home = () => {
             </div>
         </div>
 
-        {/* 6. UPCOMING WORKSHOPS - WITH BACKGROUND */}
-        <div className="py-24 relative overflow-hidden">
+        {/* 6. RESPONSIVE UPCOMING WORKSHOPS */}
+        <div className="py-16 md:py-24 relative overflow-hidden">
             <div className="absolute inset-0">
                 <img src="https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=2080&auto=format&fit=crop" 
                      className="w-full h-full object-cover opacity-25" alt="Workshop Background" />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/90 via-black/80 to-black/90"></div>
             </div>
-            <div className="container mx-auto px-6 relative z-10">
-                <div className="flex justify-between items-end mb-16">
-                    <div>
-                        <h2 className="font-sans text-5xl font-black text-white mb-4 drop-shadow-lg">LIVE WORKSHOPS</h2>
-                        <p className="text-xl text-slate-200 font-sans">Real-time training sessions with industry experts</p>
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16">
+                    <div className="mb-6 md:mb-0">
+                        <h2 className="font-sans text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 md:mb-4 drop-shadow-lg">LIVE WORKSHOPS</h2>
+                        <p className="text-base md:text-xl text-slate-200 font-sans">Real-time training sessions with experts</p>
                     </div>
-                    <Link to="/workshops" className="text-cyan-300 hover:text-white text-base font-bold border-b-2 border-cyan-400 pb-1 transition font-sans">
+                    <Link to="/workshops" className="text-cyan-300 hover:text-white text-sm md:text-base font-bold border-b-2 border-cyan-400 pb-1 transition font-sans">
                         VIEW ALL SESSIONS →
                     </Link>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {[
                         {
                             title: "Building AI Agents with GPT-4",
@@ -480,16 +544,16 @@ const Home = () => {
                             level: "Expert"
                         }
                     ].map((workshop, index) => (
-                        <div key={index} className="border border-white/20 rounded-2xl p-8 hover:border-cyan-400/70 transition duration-300 group bg-black/40 backdrop-blur-sm">
-                            <div className="flex justify-between items-start mb-6">
-                                <span className="px-4 py-2 bg-cyan-500/30 text-cyan-300 text-sm font-bold rounded-full font-sans">{workshop.level}</span>
-                                <span className="text-sm text-slate-300 font-sans">{workshop.seats}</span>
+                        <div key={index} className="border border-white/20 rounded-xl md:rounded-2xl p-6 md:p-8 hover:border-cyan-400/70 transition duration-300 group bg-black/40 backdrop-blur-sm">
+                            <div className="flex justify-between items-start mb-4 md:mb-6">
+                                <span className="px-3 py-1 md:px-4 md:py-2 bg-cyan-500/30 text-cyan-300 text-xs md:text-sm font-bold rounded-full font-sans">{workshop.level}</span>
+                                <span className="text-xs md:text-sm text-slate-300 font-sans">{workshop.seats}</span>
                             </div>
-                            <h3 className="text-2xl font-black text-white mb-4 group-hover:text-cyan-300 transition font-sans">{workshop.title}</h3>
-                            <p className="text-slate-200 text-lg mb-6 font-sans">{workshop.date}</p>
-                            <div className="flex justify-between items-center pt-6 border-t border-white/20">
-                                <span className="text-base text-slate-100 font-sans font-semibold">{workshop.instructor}</span>
-                                <button className="px-5 py-2 bg-white/20 text-white text-sm font-bold rounded-full hover:bg-cyan-400 hover:text-black transition font-sans">
+                            <h3 className="text-xl md:text-2xl font-black text-white mb-3 md:mb-4 group-hover:text-cyan-300 transition font-sans">{workshop.title}</h3>
+                            <p className="text-slate-200 text-base md:text-lg mb-4 md:mb-6 font-sans">{workshop.date}</p>
+                            <div className="flex justify-between items-center pt-4 md:pt-6 border-t border-white/20">
+                                <span className="text-sm md:text-base text-slate-100 font-sans font-semibold">{workshop.instructor}</span>
+                                <button className="px-4 py-1.5 md:px-5 md:py-2 bg-white/20 text-white text-xs md:text-sm font-bold rounded-full hover:bg-cyan-400 hover:text-black transition font-sans">
                                     RESERVE SEAT
                                 </button>
                             </div>
@@ -499,32 +563,31 @@ const Home = () => {
             </div>
         </div>
 
-        {/* 7. ENTERPRISE SOLUTIONS - WITH BACKGROUND */}
-        <div className="py-32 relative overflow-hidden">
+        {/* 7. RESPONSIVE ENTERPRISE SOLUTIONS */}
+        <div className="py-16 md:py-32 relative overflow-hidden">
             <div className="absolute inset-0">
                 <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" 
                      className="w-full h-full object-cover opacity-25" alt="Enterprise Background" />
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-900/30 via-black/80 to-purple-900/30"></div>
             </div>
-            <div className="container mx-auto px-6 relative z-10">
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="font-sans text-6xl font-black text-white mb-8 drop-shadow-lg">ENTERPRISE READY</h2>
-                    <p className="text-2xl text-slate-200 mb-12 leading-relaxed font-sans">
-                        Train entire engineering teams with customized learning paths, dedicated support, 
-                        and enterprise-grade security. Trusted by Fortune 500 companies.
+                    <h2 className="font-sans text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 md:mb-8 drop-shadow-lg">ENTERPRISE READY</h2>
+                    <p className="text-base md:text-xl lg:text-2xl text-slate-200 mb-8 md:mb-12 leading-relaxed font-sans">
+                        Train entire engineering teams with customized learning paths and enterprise-grade security.
                     </p>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-12 md:mb-16">
                         {["SSO Integration", "Custom Content", "Analytics Dashboard", "Dedicated Support"].map((feature, i) => (
-                            <div key={i} className="text-center p-8 border border-white/20 rounded-2xl hover:border-cyan-400/50 transition bg-black/40 backdrop-blur-sm">
-                                <div className="text-cyan-300 text-4xl mb-4">✓</div>
-                                <div className="text-white font-bold text-xl font-sans">{feature}</div>
+                            <div key={i} className="text-center p-4 md:p-8 border border-white/20 rounded-xl md:rounded-2xl hover:border-cyan-400/50 transition bg-black/40 backdrop-blur-sm">
+                                <div className="text-cyan-300 text-2xl md:text-4xl mb-2 md:mb-4">✓</div>
+                                <div className="text-white font-bold text-sm md:text-xl font-sans">{feature}</div>
                             </div>
                         ))}
                     </div>
                     
                     <div className="inline-block p-1 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full">
-                        <button className="px-16 py-6 bg-black text-white font-bold text-xl uppercase tracking-widest rounded-full hover:bg-white/20 transition duration-300 font-sans">
+                        <button className="px-8 md:px-16 py-4 md:py-6 bg-black text-white font-bold text-base md:text-xl uppercase tracking-wider rounded-full hover:bg-white/20 transition duration-300 font-sans">
                             Schedule Enterprise Demo
                         </button>
                     </div>
@@ -532,35 +595,34 @@ const Home = () => {
             </div>
         </div>
 
-        {/* 8. FINAL CTA - WITH IMPRESSIVE BACKGROUND */}
-        <div className="py-32 relative overflow-hidden">
+        {/* 8. RESPONSIVE FINAL CTA */}
+        <div className="py-16 md:py-32 relative overflow-hidden">
             <div className="absolute inset-0">
                 <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" 
                      className="w-full h-full object-cover opacity-30" alt="Future Background" />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/80 to-black"></div>
             </div>
-            <div className="container mx-auto px-6 relative z-10 text-center">
-                <h2 className="font-sans text-7xl font-black text-white mb-8 drop-shadow-2xl">
+            <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
+                <h2 className="font-sans text-4xl md:text-5xl lg:text-7xl font-black text-white mb-6 md:mb-8 drop-shadow-2xl">
                     READY TO <span className="text-cyan-300">LEVEL UP</span>?
                 </h2>
-                <p className="text-2xl text-slate-200 mb-12 max-w-2xl mx-auto font-sans">
-                    Join 50,000+ engineers who have transformed their careers with Unilearn. 
-                    No prior experience required.
+                <p className="text-base md:text-xl lg:text-2xl text-slate-200 mb-8 md:mb-12 max-w-2xl mx-auto font-sans">
+                    Join 50,000+ engineers who have transformed their careers with Unilearn.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-8 justify-center">
-                    <Link to="/signup" className="px-20 py-8 bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-black text-2xl uppercase tracking-widest rounded-full hover:shadow-3xl hover:shadow-cyan-500/60 transition-all duration-300 transform hover:scale-105 font-sans">
+                <div className="flex flex-col sm:flex-row gap-4 md:gap-8 justify-center">
+                    <Link to="/signup" className="px-8 md:px-20 py-4 md:py-8 bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold text-base md:text-2xl uppercase tracking-wider rounded-lg md:rounded-full hover:shadow-3xl hover:shadow-cyan-500/60 transition-all duration-300 transform hover:scale-105 font-sans">
                         Start Free Trial
                     </Link>
-                    <Link to="/courses" className="px-20 py-8 border-2 border-white/40 text-white font-black text-2xl uppercase tracking-widest rounded-full hover:bg-white/20 transition-all duration-300 group font-sans">
-                        <span className="flex items-center justify-center gap-4">
+                    <Link to="/courses" className="px-8 md:px-20 py-4 md:py-8 border-2 border-white/40 text-white font-bold text-base md:text-2xl uppercase tracking-wider rounded-lg md:rounded-full hover:bg-white/20 transition-all duration-300 group font-sans">
+                        <span className="flex items-center justify-center gap-2 md:gap-4">
                             Browse All Courses
-                            <span className="group-hover:translate-x-3 transition text-3xl">⟶</span>
+                            <span className="group-hover:translate-x-2 md:group-hover:translate-x-3 transition text-xl md:text-3xl">⟶</span>
                         </span>
                     </Link>
                 </div>
                 
-                <p className="text-slate-300 text-lg mt-10 font-sans font-semibold">
+                <p className="text-slate-300 text-sm md:text-lg mt-6 md:mt-10 font-sans font-semibold">
                     7-day free trial • No credit card required • Cancel anytime
                 </p>
             </div>

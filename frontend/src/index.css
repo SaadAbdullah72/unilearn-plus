@@ -32,7 +32,7 @@ h1, h2, h3, h4, .font-tech {
 .snake-border-wrapper {
   position: relative;
   background: #0a0a0a;
-  padding: 1px; /* Thinner, sharper border */
+  padding: 5px; /* Thinner, sharper border */
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);

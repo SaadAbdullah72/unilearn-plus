@@ -10,6 +10,7 @@ const app = express();
 // ✅ FIX 1: CORS origin se slash hatana aur localhost bhi add karna (Testing ke liye)
 const allowedOrigins = [
   'https://unilearn-plus.vercel.app',
+  'https://unilearn-plus.edgeone.dev/',
   'http://localhost:5173' // Aapka local frontend
 ];
 

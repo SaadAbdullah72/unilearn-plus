@@ -129,6 +129,26 @@ router.put('/:id/approve', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+// 1. Admin Approval/Rejection Route
+router.put('/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body; // status can be 'approved' or 'rejected'
+    const course = await Course.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    res.json({ message: `Course ${status} successfully`, course });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 2. Admin Delete Route
+router.delete('/:id', async (req, res) => {
+  try {
+    await Course.findByIdAndDelete(req.params.id);
+    res.json({ message: "Course deleted successfully by Admin" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // 5. GET SINGLE COURSE (Yeh End mein rakhna zaroori hai)
 router.get('/:id', async (req, res) => {
